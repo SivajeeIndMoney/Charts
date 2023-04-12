@@ -735,7 +735,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
                 _isDragging = false
                 
                 // Prevent the parent scroll view from scrolling
-                _outerScrollView?.nsuiIsScrollEnabled = false
+                // _outerScrollView?.nsuiIsScrollEnabled = false //Commented for outer scroll to work
 
             }
         }
