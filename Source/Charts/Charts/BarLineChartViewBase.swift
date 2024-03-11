@@ -253,7 +253,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         
         context.restoreGState()
         
-        renderer.drawExtras(context: context)
+        renderer.drawBubbles?(context: context, view: self)
         
         if xAxis.isEnabled && !xAxis.isDrawLimitLinesBehindDataEnabled
         {

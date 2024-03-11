@@ -115,6 +115,10 @@ open class BarLineScatterCandleBubbleRenderer: NSObject, DataRenderer
     public func createAccessibleHeader(usingChart chart: ChartViewBase, andData data: ChartData, withDefaultDescription defaultDescription: String) -> NSUIAccessibilityElement {
         return AccessibleHeader.create(usingChart: chart, andData: data, withDefaultDescription: defaultDescription)
     }
+    
+    public func drawBubbles(context: CGContext, view: UIView) {
+        
+    }
 }
 
 extension BarLineScatterCandleBubbleRenderer.XBounds: RangeExpression {

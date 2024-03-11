@@ -54,6 +54,8 @@ public protocol DataRenderer: Renderer
     func createAccessibleHeader(usingChart chart: ChartViewBase,
                                         andData data: ChartData,
                                         withDefaultDescription defaultDescription: String) -> NSUIAccessibilityElement
+    
+    @objc optional func drawBubbles(context: CGContext, view: UIView)
 }
 
 internal struct AccessibleHeader {

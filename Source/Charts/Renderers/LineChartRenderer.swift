@@ -514,6 +514,13 @@ open class LineChartRenderer: LineRadarRenderer
         return filled
     }
     
+    private var parentView: UIView?
+    private var bubbleAnimationView: UIView?
+    public override func drawBubbles(context: CGContext, view: UIView) {
+        self.parentView = view
+        self.drawExtras(context: context)
+    }
+    
     open override func drawValues(context: CGContext)
     {
         guard
@@ -611,6 +618,9 @@ open class LineChartRenderer: LineRadarRenderer
             let lineData = dataProvider.lineData
         else { return }
         
+        bubbleAnimationView?.layer.removeAllAnimations()
+        bubbleAnimationView?.removeFromSuperview()
+        
         let phaseY = animator.phaseY
         
         var pt = CGPoint()
@@ -633,6 +643,27 @@ open class LineChartRenderer: LineRadarRenderer
         for i in lineData.indices
         {
             guard let dataSet = lineData[i] as? LineChartDataSetProtocol else { continue }
+            
+            let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
+            let valueToPixelMatrix = trans.valueToPixelMatrix
+            _xBounds.set(chart: dataProvider, dataSet: dataSet, animator: animator)
+            
+            if let data = dataSet.entryForIndex(_xBounds.max) {
+                pt.x = CGFloat(data.x)
+                pt.y = CGFloat(data.y * phaseY)
+                pt = pt.applying(valueToPixelMatrix)
+                pt.x -= dataSet.circleRadius * 0.5
+                pt.y -= dataSet.circleRadius * 0.5
+                rect.origin = pt
+                rect.size.height = dataSet.circleRadius
+                rect.size.width = dataSet.circleRadius
+                bubbleAnimationView = UIView()
+                parentView?.addSubview(bubbleAnimationView!)
+                bubbleAnimationView?.frame = rect
+                bubbleAnimationView?.backgroundColor = .clear
+                bubbleAnimationView?.layer.cornerRadius = rect.height / 2
+                bubbleAnimationView?.addPulseEffect(at: .zero, with: dataSet.getCircleColor(atIndex: _xBounds.max) ?? .white, size: rect.size.height)
+            }
 
             // Skip Circles and Accessibility if not enabled,
             // reduces CPU significantly if not needed
@@ -640,11 +671,6 @@ open class LineChartRenderer: LineRadarRenderer
             {
                 continue
             }
-            
-            let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
-            let valueToPixelMatrix = trans.valueToPixelMatrix
-            
-            _xBounds.set(chart: dataProvider, dataSet: dataSet, animator: animator)
             
             let circleRadius = dataSet.circleRadius
             let circleDiameter = circleRadius * 2.0
@@ -657,11 +683,10 @@ open class LineChartRenderer: LineRadarRenderer
             let drawTransparentCircleHole = drawCircleHole &&
                 (dataSet.circleHoleColor == nil ||
                     dataSet.circleHoleColor == NSUIColor.clear)
-            
+
             for j in _xBounds
             {
                 guard let e = dataSet.entryForIndex(j) else { break }
-
                 pt.x = CGFloat(e.x)
                 pt.y = CGFloat(e.y * phaseY)
                 pt = pt.applying(valueToPixelMatrix)
@@ -906,4 +931,59 @@ open class LineChartRenderer: LineRadarRenderer
 
         return element
     }
+}
+
+private extension UIView {
+    func addPulseEffect(at point: CGPoint, with color: UIColor, size: CGFloat) {
+        guard nil == viewWithTag(55555) else {return}
+        let bubbleView = UIView(frame: CGRect(origin: point, size: CGSize(width: size, height: size)))
+        bubbleView.isUserInteractionEnabled = false
+        bubbleView.layer.cornerRadius = size / 2
+        bubbleView.backgroundColor = color
+        let backDropView = ZPPulseView(frame: bubbleView.frame)
+        backDropView.isUserInteractionEnabled = false
+        backDropView.tag = 55555
+        backDropView.backgroundColor = bubbleView.backgroundColor
+        backDropView.layer.cornerRadius = size / 2
+        addSubview(backDropView)
+        addSubview(bubbleView)
+        backDropView.addPulseAnimation()
+    }
+    
+    func resumePulse() {
+        if let pulseView = viewWithTag(55555) as? ZPPulseView {
+            pulseView.addPulseAnimation()
+        }
+    }
+}
+
+private final class ZPPulseView: UIView {
+    
+    func addPulseAnimation() {
+        layer.removeAllAnimations()
+        layoutIfNeeded()
+        let pulseAnimation: CABasicAnimation = CABasicAnimation(keyPath: "transform.scale")
+        pulseAnimation.fromValue = 0.8
+        pulseAnimation.toValue = 2.5
+        pulseAnimation.duration = 3
+        pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        pulseAnimation.autoreverses = false
+        pulseAnimation.repeatCount = .infinity
+        
+        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
+        opacityAnimation.fromValue = 1
+        opacityAnimation.toValue = 0.0
+        opacityAnimation.duration = 3
+        opacityAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        opacityAnimation.repeatCount = .infinity
+        
+        layer.add(pulseAnimation, forKey: "transform")
+        layer.add(opacityAnimation, forKey: "opacity")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        addPulseAnimation()
+    }
+    
 }
