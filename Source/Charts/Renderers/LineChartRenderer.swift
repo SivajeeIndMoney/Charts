@@ -663,6 +663,9 @@ open class LineChartRenderer: LineRadarRenderer
                 bubbleAnimationView?.backgroundColor = .clear
                 bubbleAnimationView?.layer.cornerRadius = rect.height / 2
                 bubbleAnimationView?.addPulseEffect(at: .zero, with: dataSet.getCircleColor(atIndex: _xBounds.max) ?? .white, size: rect.size.height)
+                UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
+                    self.bubbleAnimationView?.transform = CGAffineTransform(translationX: 0, y: -2)
+                }, completion: nil)
             }
 
             // Skip Circles and Accessibility if not enabled,
