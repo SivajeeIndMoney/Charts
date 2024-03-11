@@ -648,7 +648,7 @@ open class LineChartRenderer: LineRadarRenderer
             let valueToPixelMatrix = trans.valueToPixelMatrix
             _xBounds.set(chart: dataProvider, dataSet: dataSet, animator: animator)
             
-            if let data = dataSet.entryForIndex(_xBounds.max) {
+            if let data = dataSet.entryForIndex(_xBounds.max), dataSet.showLiveTicking {
                 pt.x = CGFloat(data.x)
                 pt.y = CGFloat(data.y * phaseY)
                 pt = pt.applying(valueToPixelMatrix)

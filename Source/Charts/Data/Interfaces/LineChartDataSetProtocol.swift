@@ -83,4 +83,7 @@ public protocol LineChartDataSetProtocol: LineRadarChartDataSetProtocol
     
     /// Sets a custom FillFormatterProtocol to the chart that handles the position of the filled-line for each DataSet. Set this to null to use the default logic.
     var fillFormatter: FillFormatter? { get set }
+    
+    /// Live ticking bubble will be shown at the last index or graph if true, default value is false.
+    var showLiveTicking: Bool { get set }
 }

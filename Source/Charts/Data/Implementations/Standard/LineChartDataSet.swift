@@ -113,9 +113,6 @@ open class LineChartDataSet: LineRadarChartDataSet, LineChartDataSetProtocol
         circleColors.removeAll(keepingCapacity: false)
     }
     
-    /// Live ticking bubble will be shown at the last index or graph if true, default value is false.
-    open var showLiveTicking: Bool = false
-    
     /// If true, drawing circles is enabled
     open var drawCirclesEnabled = true
     
@@ -157,6 +154,9 @@ open class LineChartDataSet: LineRadarChartDataSet, LineChartDataSetProtocol
             _fillFormatter = newValue ?? DefaultFillFormatter()
         }
     }
+    
+    /// Live ticking bubble will be shown at the last index or graph if true, default value is false.
+    open var showLiveTicking: Bool = false
     
     // MARK: NSCopying
     
