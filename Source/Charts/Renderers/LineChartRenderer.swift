@@ -618,9 +618,6 @@ open class LineChartRenderer: LineRadarRenderer
             let lineData = dataProvider.lineData
         else { return }
         
-        bubbleAnimationView?.layer.removeAllAnimations()
-        bubbleAnimationView?.removeFromSuperview()
-        
         let phaseY = animator.phaseY
         
         var pt = CGPoint()
@@ -657,15 +654,24 @@ open class LineChartRenderer: LineRadarRenderer
                 rect.origin = pt
                 rect.size.height = dataSet.circleRadius
                 rect.size.width = dataSet.circleRadius
-                bubbleAnimationView = UIView()
-                parentView?.addSubview(bubbleAnimationView!)
-                bubbleAnimationView?.frame = rect
-                bubbleAnimationView?.backgroundColor = .clear
-                bubbleAnimationView?.layer.cornerRadius = rect.height / 2
-                bubbleAnimationView?.addPulseEffect(at: .zero, with: dataSet.getCircleColor(atIndex: _xBounds.max) ?? .white, size: rect.size.height)
-                UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: { 
-                    self.bubbleAnimationView?.transform = CGAffineTransform(translationX: 0, y: -2)
-                }, completion: nil)
+                if (bubbleAnimationView?.frame.origin.x ?? 0) != rect.origin.x {
+                    let isFirstLoading = bubbleAnimationView == nil
+                    bubbleAnimationView?.layer.removeAllAnimations()
+                    bubbleAnimationView?.removeFromSuperview()
+                    bubbleAnimationView = UIView()
+                    parentView?.addSubview(bubbleAnimationView!)
+                    bubbleAnimationView?.frame = rect
+                    bubbleAnimationView?.backgroundColor = .clear
+                    bubbleAnimationView?.layer.cornerRadius = rect.height / 2
+                    let latency: TimeInterval = isFirstLoading ? 0.5 : 0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + latency) { [weak self] in
+                        guard let self else {return}
+                        self.bubbleAnimationView?.addPulseEffect(at: .zero, with: dataSet.getCircleColor(atIndex: _xBounds.max) ?? .white, size: rect.size.height)
+                        UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat], animations: {
+                            self.bubbleAnimationView?.transform = CGAffineTransform(translationX: 0, y: -2)
+                        }, completion: nil)
+                    }
+                }
             }
 
             // Skip Circles and Accessibility if not enabled,
