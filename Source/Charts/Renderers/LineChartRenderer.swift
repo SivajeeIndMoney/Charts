@@ -672,6 +672,10 @@ open class LineChartRenderer: LineRadarRenderer
                         }, completion: nil)
                     }
                 }
+            } else {
+                bubbleAnimationView?.layer.removeAllAnimations()
+                bubbleAnimationView?.removeFromSuperview()
+                bubbleAnimationView?.frame = .zero
             }
 
             // Skip Circles and Accessibility if not enabled,
