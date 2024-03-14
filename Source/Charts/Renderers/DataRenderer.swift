@@ -56,6 +56,8 @@ public protocol DataRenderer: Renderer
                                         withDefaultDescription defaultDescription: String) -> NSUIAccessibilityElement
     
     @objc optional func drawBubbles(context: CGContext, view: UIView)
+    @objc optional func didShowMarker(at rect: CGRect)
+    @objc optional func didHideMarker()
 }
 
 internal struct AccessibleHeader {
