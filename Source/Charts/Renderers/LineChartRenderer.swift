@@ -950,6 +950,25 @@ open class LineChartRenderer: LineRadarRenderer
     }
 }
 
+/// Block of methods to handle market/tooltip intersection with bubble
+public extension LineChartRenderer {
+    func didShowMarker(at rect: CGRect) {
+        guard let bubbleRect = bubbleAnimationView?.frame, bubbleRect.intersects(rect) else {
+            return didHideMarker()
+        }
+        UIView.animate(withDuration: 0.25) {
+            self.bubbleAnimationView?.alpha = 0
+        }
+    }
+    
+    func didHideMarker() {
+        UIView.animate(withDuration: 0.25) {
+            self.bubbleAnimationView?.alpha = 1
+        }
+    }
+}
+
+// MARK: - Ripple effect methods
 private extension UIView {
     func addPulseEffect(at point: CGPoint, with color: UIColor, size: CGFloat) {
         guard nil == viewWithTag(55555) else {return}
