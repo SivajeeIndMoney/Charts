@@ -655,15 +655,19 @@ open class LineChartRenderer: LineRadarRenderer
                 rect.size.height = dataSet.circleRadius
                 rect.size.width = dataSet.circleRadius
                 if (bubbleAnimationView?.frame.origin.x ?? 0) != rect.origin.x {
-                    let isFirstLoading = bubbleAnimationView == nil
                     bubbleAnimationView?.layer.removeAllAnimations()
                     bubbleAnimationView?.removeFromSuperview()
                     bubbleAnimationView = UIView()
                     parentView?.addSubview(bubbleAnimationView!)
                     bubbleAnimationView?.frame = rect
-                    bubbleAnimationView?.backgroundColor = .clear
+                    bubbleAnimationView?.backgroundColor = dataSet.fillColor
                     bubbleAnimationView?.layer.cornerRadius = rect.height / 2
-                    let latency: TimeInterval = isFirstLoading ? 0.5 : 0
+                    /// Approx time to download and chart rendering, bubble shuold be animated post that.
+                    let latency: TimeInterval = 0.7
+                    bubbleAnimationView?.alpha = .zero
+                    UIView.animate(withDuration: latency) {
+                        self.bubbleAnimationView?.alpha = 1
+                    }
                     DispatchQueue.main.asyncAfter(deadline: .now() + latency) { [weak self] in
                         guard let self else {return}
                         self.bubbleAnimationView?.addPulseEffect(at: .zero, with: dataSet.fillColor, size: rect.size.height)
