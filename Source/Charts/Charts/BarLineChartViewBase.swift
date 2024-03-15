@@ -572,7 +572,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             lastHighlighted = h
             highlightValue(h, callDelegate: true)
         } else {
-            highlightValue(nil, callDelegate: false)
+            highlightValue(nil, callDelegate: true)
         }
     }
     
@@ -805,7 +805,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
                     _decelerationVelocity = recognizer.velocity(in: self)
                     
                     _decelerationDisplayLink = NSUIDisplayLink(target: self, selector: #selector(BarLineChartViewBase.decelerationLoop))
-                    _decelerationDisplayLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+                    //_decelerationDisplayLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
                 }
                 
                 _isDragging = false
