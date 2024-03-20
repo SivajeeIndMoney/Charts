@@ -818,7 +818,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             }
 
             delegate?.chartViewDidEndPanning?(self)
-            highlightValue(nil, callDelegate: false)
+            highlightValue(nil, callDelegate: true)
         }
     }
     
