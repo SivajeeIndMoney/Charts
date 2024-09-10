@@ -574,7 +574,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             let h = getHighlightByTouchPoint(recognizer.location(in: self))
             lastHighlighted = h
             highlightValue(h, callDelegate: true)
-        } else {
+        } else if alwaysShowMarker != true {
             highlightValue(nil, callDelegate: true)
         }
     }
