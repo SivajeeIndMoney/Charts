@@ -97,6 +97,9 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     
     /// flag that indicates if a custom viewport offset has been set
     private var _customViewPortEnabled = false
+
+    /// Marker will not be hidden on gesture end if value is true. Default is false
+    open var alwaysShowMarker: Bool?
     
     public override init(frame: CGRect)
     {
@@ -818,7 +821,9 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             }
 
             delegate?.chartViewDidEndPanning?(self)
-            highlightValue(nil, callDelegate: true)
+            if alwaysShowMarker != true {
+                highlightValue(nil, callDelegate: true)
+            }
         }
     }
     
