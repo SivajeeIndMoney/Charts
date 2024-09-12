@@ -18,6 +18,11 @@ import UIKit
 import AppKit
 #endif
 
+public protocol ScrubbingDelegate: AnyObject {
+    func didStartScrubbing()
+    func didEndScrubbing()
+}
+
 /// Base-class of LineChart, BarChart, ScatterChart and CandleStickChart.
 open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartDataProvider, NSUIGestureRecognizerDelegate
 {
@@ -100,6 +105,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
 
     /// Marker will not be hidden on gesture end if value is true. Default is false
     open var alwaysShowMarker: Bool?
+    open var scrubbingDelegate: ScrubbingDelegate?
     
     public override init(frame: CGRect)
     {
@@ -703,6 +709,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     {
         if recognizer.state == NSUIGestureRecognizerState.began && recognizer.nsuiNumberOfTouches() > 0
         {
+            scrubbingDelegate?.didStartScrubbing()
             stopDeceleration()
             
             if data === nil || !self.isDragEnabled
@@ -824,6 +831,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             if alwaysShowMarker != true {
                 highlightValue(nil, callDelegate: true)
             }
+            scrubbingDelegate?.didEndScrubbing()
         }
     }
     
